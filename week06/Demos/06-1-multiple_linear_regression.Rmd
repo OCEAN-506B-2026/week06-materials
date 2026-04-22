@@ -1,0 +1,171 @@
+---
+title: "Multiple linear regression"
+author: "Wing-Ho Ko"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading packages
+
+```{r}
+library(tidyverse)
+library(broom)
+library(ggplot2)
+```
+
+In this demo we will investigate the relation between dissolved oxygen and physical factors such as temperature, salinity, and depth. The data we use come from a subset of the CalCOFI (California Cooperative Oceanic Fisheries Investigations) bottle database.
+
+## Loading data
+
+Load the subsetted data:
+
+```{r}
+CalCOFI <- read_csv("data/CalCOFI_sub.csv")
+```
+
+Inspect the dataset
+
+```{r}
+glimpse(CalCOFI)
+```
+
+## Simple visualizations
+
+```{r}
+ggplot(CalCOFI) + geom_point(aes(y=O_mmol_kg, x=depth_m), size=0.5)
+```
+
+```{r}
+ggplot(CalCOFI) + geom_point(aes(y=O_mmol_kg, x=T_degC), size=0.5)
+```
+
+```{r}
+ggplot(CalCOFI) + geom_point(aes(y=O_mmol_kg, x=salinity), size=0.5)
+```
+
+## Additive multiple linear regression
+
+### Specifying and fitting the model
+
+Let's try an additive model:
+
+```{r}
+O_lm_add <- lm(O_mmol_kg ~ depth_m + salinity + T_degC, CalCOFI)
+```
+
+### Extracting information
+
+Extract the usual summary
+
+```{r}
+O_sm_add <- summary(O_lm_add)
+print(O_sm_add)
+```
+
+Again, we can extract various pieces of information conveniently using `tidy()` and `glance()` from `broom`:
+
+```{r}
+O_lm_add_tbl <- tidy(O_lm_add)
+O_lm_add_tbl
+```
+
+```{r}
+O_lm_add_gl <- glance(O_lm_add)
+O_lm_add_gl
+```
+
+Example: getting the value of r-squared programatically
+
+```{r}
+O_lm_add_gl$r.squared
+```
+
+### Making prediction
+
+To make prediction, we first need to construct the data frame of new data. To do so manually:
+
+```{r}
+new_depth = seq(30, 40, 5)
+new_temp = seq(10, 15, 2.5)
+new_sal = seq(33, 34, 0.5)
+
+phys_new <- data.frame(
+  depth_m = rep(new_depth, times=length(new_temp) * length(new_sal)),
+  T_degC = rep(new_temp, times=length(new_sal), each=length(new_depth)),
+  salinity = rep(new_sal, each=length(new_depth) * length(new_temp))
+)
+```
+
+```{r}
+O_new <- predict(O_lm_add, phys_new)
+O_pred <- cbind(phys_new, O_new)
+O_pred
+```
+
+### Diagnostics
+
+Diagnostics: residuals on y and fitted value on x:
+
+```{r}
+ggplot() + geom_point(aes(x=fitted(O_lm_add), y=resid(O_lm_add)), size=0.5)
+```
+
+
+## Interacting models
+
+Consider adding interaction between salinity and temperature
+
+```{r}
+O_lm_TSint <- lm(O_mmol_kg ~ depth_m + salinity * T_degC, CalCOFI)
+```
+
+Print the summary:
+
+```{r}
+O_sm_TSint <- summary(O_lm_TSint)
+print(O_sm_TSint)
+```
+
+Let's consider the same diagnostic plot
+
+```{r}
+ggplot() + geom_point(aes(x=fitted(O_lm_TSint), y=resid(O_lm_TSint)), size=0.5)
+```
+
+### Model selection
+
+Since the two models are nested we can perform an F-test
+
+```{r}
+anova(O_lm_add, O_lm_TSint)
+```
+
+Thus it is probably a good idea to keep the interaction term. 
+
+Alternatively, we can also investigate the AIC of the two models:
+
+```{r}
+AIC(O_lm_add, O_lm_TSint)
+```
+
+Again AIC suggests keeping the interaction term.
+
+Finally, let's try to automatically select a model starting from the additive one: 
+
+```{r}
+O_lm_best <- step(O_lm_add, O_mmol_kg ~ depth_m * salinity * T_degC)
+```
+
+Let's try the "best" model that the stepwise procedure
+
+```{r}
+O_lm_best <- step(O_lm_add, O_mmol_kg ~ depth_m * salinity * T_degC)
+```
+
+Turns out the fully interacting model is selected. Printing out:
+
+```{r}
+summary(O_lm_best)
+```
