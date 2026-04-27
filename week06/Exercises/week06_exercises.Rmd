@@ -63,3 +63,9 @@ Consider the penguins dataset again. Focus on the numerical variables (body mass
 
 3. Now add the interaction term. Determine if the interaction term is statistically significant in the new model.
 
+
+## (Optional) Feedback questions
+
+1. Are there any topic(s) from this week that still confuse you?
+
+2. Which activities work and which doesn't? What do you want to see change and what do you want to keep?
