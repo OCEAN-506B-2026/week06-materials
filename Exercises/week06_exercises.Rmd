@@ -10,7 +10,24 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Loading library
 
 
-## Exercise 1: formula interface
+## Exercise 1: simple linear regression on penguins
+
+Consider the penguins dataset. Treat body mass as the response variable and flipper length as the explanatory variable.
+
+1. Subset the penguins dataset to retain only the body mass and flipper length variables, and drop any observations that contain `NA`'s
+
+2. Make a plot of body mass versus flipper length. Use `geom_smooth()` to also add the linear regression line
+
+3. Perform the linear regression. How much does body mass increases per unit increase in flipper length? Also determine if the dependence of body mass on flipper length is statistically significant (= discernible)
+
+4. What is the 95% confidence interval in the slope you find in the previous part?
+
+5. Suppose the flipper length of a penguin is measured to be 204 mm. What is the expected body mass of the penguin? And what is the range of body mass you'd expect to cover the body mass of the penguin 90% of the times?
+
+6. Plot the residuals against the explanatory variable. Is there an overall trend in the mean? Is there heteroscedasticity? Also check normality.
+
+
+## Exercise 2: formula interface
 
 1. What terms are included in the following models?
 
@@ -21,7 +38,7 @@ knitr::opts_chunk$set(echo = TRUE)
 2. Suppose you have the response variable Y and 3 explanatory variables X1, X2, X3. Write down the formula that includes all main effects ($X_i$) and second order interactions ($X_i X_j$) but not the third order interaction ($X_i X_j X_k$)
 
 
-## Exercise 2: multiple linear regression on penguin
+## Exercise 3: multiple linear regression on penguin
 
 Consider the penguin dataset. We'll treat body mass as our response variable, and treat bill length, bill depth, and flipper length as our explanatory variables. As usual, drop any observations for which any of these four variables are NA's
 
@@ -36,32 +53,6 @@ Consider the penguin dataset. We'll treat body mass as our response variable, an
 5. Fix bill depth at 14 mm, and consider flipper length in the range of 190 to 210 mm. Predict the body mass as a function of flipper length using (a) the additive linear model and (b) the interacting model as described in part (4). Illustrate the results in a plot.
 
 Repeat the exercise with bill depth at 18 mm
-
-
-## Exercise 3: one-way and two-way ANOVAs
-
-Consider the penguin dataset. Focus on body mass as the response variable and the sex and species of penguins as explanatory variables. As usual, subset your dataset so that any NA entries from these columns are removed.
-
-1. Consider the penguin species as the sole explanatory variable. Determine if one-way ANOVA or Kruskal-Wallis test should be performed.
-
-2. Perform the appropriate one-factor test based on your results from (1). Is the difference between species statistically significant?
-
-3. Perform the post-hoc pairwise test consistent with the test you performed in (2). Which pairwise difference is significant?
-
-4. Now consider BOTH species and sex as explanation variables, with possible interactions. Again determine which test is appropriate.
-
-5. Conduct the appropriate test based on your results from (4). Is the interaction significant?
-
-
-## Exercise 4: multiple linear regression with categorical variables
-
-Consider the penguins dataset again. Focus on the numerical variables (body mass, bill length, bill depth, and flipper length) as well as species. As before we'll treat body mass as the response variable and the remaining variables as explanatory.
-
-1. Suppose we are interested in the how bill depth and species may predict body mass. Fit an additive linear model, and print the summary (use the default treatment contrast). Interpret the coefficients of the summary
-
-2. Determine if the effect of the species variable is statistically significant or not in the above model.
-
-3. Now add the interaction term. Determine if the interaction term is statistically significant in the new model.
 
 
 ## (Optional) Feedback questions
